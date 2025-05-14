@@ -1,24 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:padding="16dp">
-
-<LinearLayout
-    android:id="@+id/fragment_live_root"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <TextView android:id="@+id/text_accel"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Accelerometer: -" />
+        android:padding="16dp">
 
-    <TextView android:id="@+id/text_gyro"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:text="Gyroskop: -" />
-</LinearLayout>
+        <TextView
+            android:id="@+id/text_accel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Accelerometer: -"
+            android:textSize="16sp"
+            android:paddingBottom="12dp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/text_gyro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gyroskop: -"
+            android:textSize="16sp"
+            android:paddingBottom="24dp"
+            android:textStyle="bold" />
+
+        <com.github.mikephil.charting.charts.LineChart
+            android:id="@+id/chart_accel_x"
+            android:layout_width="match_parent"
+            android:layout_height="300dp"
+            chart.description.text = "Live Accel X"
+            android:layout_marginTop="16dp"/>
+    </LinearLayout>
 </ScrollView>
