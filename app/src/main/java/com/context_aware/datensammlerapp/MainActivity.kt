@@ -9,6 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import com.context_aware.datensammlerapp.data.SensorDataLogger
 import com.context_aware.datensammlerapp.viewmodel.SensorConfigViewModel
 import com.context_aware.datensammlerapp.viewmodel.SensorLiveDataViewModel
 
@@ -17,9 +18,11 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     private lateinit var sensorManager: SensorManager
     private var accelerometer: Sensor? = null
     private var gyroscope: Sensor? = null
-    private val sensorLiveDataViewModel: SensorLiveDataViewModel by viewModels()
 
     private val configViewModel: SensorConfigViewModel by viewModels()
+    private val sensorLiveDataViewModel: SensorLiveDataViewModel by viewModels()
+
+    private lateinit var sensorDataLogger: SensorDataLogger
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,15 +39,19 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
 
+        sensorDataLogger = SensorDataLogger(this)
+
         // Beobachte Konfigurationsänderungen
         configViewModel.useAccelerometer.observe(this) { updateSensorListener() }
         configViewModel.useGyroscope.observe(this) { updateSensorListener() }
         configViewModel.samplingRate.observe(this) { updateSensorListener() }
-
+        configViewModel.collecting.observe(this) { updateSensorListener() }
     }
 
     private fun updateSensorListener() {
         sensorManager.unregisterListener(this)
+
+        if (configViewModel.collecting.value != true) return
 
         val rate = when (configViewModel.samplingRate.value) {
             "FASTEST" -> SensorManager.SENSOR_DELAY_FASTEST
@@ -67,7 +74,7 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
     }
 
     override fun onSensorChanged(event: SensorEvent?) {
-        if (configViewModel.useAccelerometer.value != true && configViewModel.useGyroscope.value != true) return
+        if (configViewModel.collecting.value != true) return
 
         event?.let {
             val x = it.values[0]
@@ -76,17 +83,21 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
             when (it.sensor.type) {
                 Sensor.TYPE_ACCELEROMETER -> {
-                    if (configViewModel.useAccelerometer.value == true)
-                        sensorLiveDataViewModel.updateAccelerometer(x, y, z)
+                    sensorLiveDataViewModel.updateAccelerometer(x, y, z)
+                    sensorDataLogger.logAccelerometer(x, y, z)
                 }
                 Sensor.TYPE_GYROSCOPE -> {
-                    if (configViewModel.useGyroscope.value == true)
-                        sensorLiveDataViewModel.updateGyroscope(x, y, z)
+                    sensorLiveDataViewModel.updateGyroscope(x, y, z)
+                    sensorDataLogger.logGyroscope(x, y, z)
                 }
             }
         }
     }
 
-
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
+
+    override fun onDestroy() {
+        super.onDestroy()
+        sensorDataLogger.close()
+    }
 }

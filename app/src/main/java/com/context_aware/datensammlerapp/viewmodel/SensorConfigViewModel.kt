@@ -15,15 +15,22 @@ class SensorConfigViewModel : ViewModel() {
     private val _samplingRate = MutableLiveData("NORMAL")
     val samplingRate: LiveData<String> = _samplingRate
 
+    private val _collecting = MutableLiveData(false)
+    val collecting: LiveData<Boolean> = _collecting
+
     fun setUseAccelerometer(enabled: Boolean) {
-        _useAccelerometer.value = enabled
+        _useAccelerometer.postValue(enabled)
     }
 
     fun setUseGyroscope(enabled: Boolean) {
-        _useGyroscope.value = enabled
+        _useGyroscope.postValue(enabled)
     }
 
     fun setSamplingRate(rate: String) {
-        _samplingRate.value = rate
+        _samplingRate.postValue(rate)
+    }
+
+    fun setCollecting(state: Boolean) {
+        _collecting.postValue(state)
     }
 }
