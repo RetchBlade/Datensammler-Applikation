@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/liveFragment"
+        android:title="Live"
+        android:icon="@android:drawable/ic_menu_view" />
+    <item
+        android:id="@+id/configFragment"
+        android:title="Konfiguration"
+        android:icon="@android:drawable/ic_menu_manage" />
+    <item
+        android:id="@+id/storageFragment"
+        android:title="Speichern"
+        android:icon="@android:drawable/ic_menu_save" />
+</menu>

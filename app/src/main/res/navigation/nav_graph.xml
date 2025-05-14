@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/liveFragment">
+
+    <fragment
+        android:id="@+id/liveFragment"
+        android:name="com.context_aware.datensammlerapp.ui.live.LiveFragment"
+        android:label="Live" />
+
+    <fragment
+        android:id="@+id/configFragment"
+        android:name="com.context_aware.datensammlerapp.ui.config.ConfigFragment"
+        android:label="Konfiguration" />
+
+    <fragment
+        android:id="@+id/storageFragment"
+        android:name="com.context_aware.datensammlerapp.ui.storage.StorageFragment"
+        android:label="Speicherung" />
+</navigation>
