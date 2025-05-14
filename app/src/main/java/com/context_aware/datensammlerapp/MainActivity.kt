@@ -9,7 +9,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
-import com.context_aware.datensammlerapp.data.SensorDataLogger
+import com.context_aware.datensammlerapp.data.SensorDataCollector
 import com.context_aware.datensammlerapp.viewmodel.SensorConfigViewModel
 import com.context_aware.datensammlerapp.viewmodel.SensorLiveDataViewModel
 
@@ -21,8 +21,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
 
     private val configViewModel: SensorConfigViewModel by viewModels()
     private val sensorLiveDataViewModel: SensorLiveDataViewModel by viewModels()
-
-    private lateinit var sensorDataLogger: SensorDataLogger
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,9 +37,6 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
         accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER)
         gyroscope = sensorManager.getDefaultSensor(Sensor.TYPE_GYROSCOPE)
 
-        sensorDataLogger = SensorDataLogger(this)
-
-        // Beobachte Konfigurationsänderungen
         configViewModel.useAccelerometer.observe(this) { updateSensorListener() }
         configViewModel.useGyroscope.observe(this) { updateSensorListener() }
         configViewModel.samplingRate.observe(this) { updateSensorListener() }
@@ -84,20 +79,15 @@ class MainActivity : AppCompatActivity(), SensorEventListener {
             when (it.sensor.type) {
                 Sensor.TYPE_ACCELEROMETER -> {
                     sensorLiveDataViewModel.updateAccelerometer(x, y, z)
-                    sensorDataLogger.logAccelerometer(x, y, z)
+                    SensorDataCollector.addAccelerometer(x, y, z)
                 }
                 Sensor.TYPE_GYROSCOPE -> {
                     sensorLiveDataViewModel.updateGyroscope(x, y, z)
-                    sensorDataLogger.logGyroscope(x, y, z)
+                    SensorDataCollector.addGyroscope(x, y, z)
                 }
             }
         }
     }
 
     override fun onAccuracyChanged(sensor: Sensor?, accuracy: Int) {}
-
-    override fun onDestroy() {
-        super.onDestroy()
-        sensorDataLogger.close()
-    }
 }
